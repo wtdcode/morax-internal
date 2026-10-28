@@ -1,0 +1,23 @@
+[package]
+name = "evolve-knowdit-project"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+schemars.workspace = true
+color-eyre.workspace = true
+tracing.workspace = true
+tokio.workspace = true
+llmy.workspace = true
+clap.workspace = true
+itertools.workspace = true
+evolve-knowdit-types.workspace = true
+toml.workspace = true
+toml_edit.workspace = true
+globset.workspace = true
+regex.workspace = true
+chrono.workspace = true

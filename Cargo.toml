@@ -1,0 +1,39 @@
+[workspace]
+members = ["crates/*"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "GPL-2.0-only"
+description = "Model-driven smart contract auditing with dynamically verified obligations."
+
+[workspace.dependencies]
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+schemars = "1"
+clap = { version = "4", features = ["env", "derive"] }
+color-eyre = "0.6"
+thiserror = "2"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+dotenvy = "0.15"
+llmy = { path = "/home/mio/opensource/llmy/crates/llmy" }
+toml = "0.8"
+toml_edit = "0.22"
+knowdit-forge = { path = "./crates/knowdit-forge" }
+globset = "0.4"
+itertools = "0.14"
+regex = "1"
+chrono = { version = "0.4", features = ["serde"] }
+async-channel = "2"
+rust_decimal = "1"
+tracing-appender = "0.2"
+
+evolve-knowdit-types = { path = "./crates/evolve-knowdit-types" }
+evolve-knowdit-project = { path = "./crates/evolve-knowdit-project" }
+evolve-knowdit-agent = { path = "./crates/evolve-knowdit-agent" }
+evolve-knowdit-matrix = { path = "./crates/evolve-knowdit-matrix" }
+evolve-knowdit-verify = { path = "./crates/evolve-knowdit-verify" }
+evolve-knowdit-report = { path = "./crates/evolve-knowdit-report" }

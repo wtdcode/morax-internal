@@ -1,0 +1,11 @@
+[package]
+name = "knowdit-forge"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "forge invocation runtime (host binary, memory-capped cgroup v2 child, or docker), vendored from knowdit."
+
+[dependencies]
+color-eyre.workspace = true
+tokio.workspace = true
+tracing.workspace = true
