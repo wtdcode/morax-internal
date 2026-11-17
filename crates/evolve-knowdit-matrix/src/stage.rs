@@ -44,6 +44,10 @@ pub struct MatrixArgs {
     /// Agent step budget for merging the property columns.
     #[arg(long = "matrix-properties-max-steps", default_value_t = 40)]
     pub properties_max_steps: usize,
+    /// Take every candidate property of the level drafts as a column, numbered in level
+    /// order, instead of merging them with an agent.
+    #[arg(long = "matrix-skip-property-merge")]
+    pub skip_property_merge: bool,
     /// Agent step budget for deciding one subject row.
     #[arg(long = "matrix-row-max-steps", default_value_t = 40)]
     pub row_max_steps: usize,
@@ -81,6 +85,7 @@ pub struct MatrixArgs {
 pub struct MatrixConfig {
     pub max_properties: usize,
     pub max_draft_properties: usize,
+    pub skip_property_merge: bool,
     pub task_mode: TaskMode,
     pub max_subtasks_per_task: usize,
     pub task_checkpoint_step: usize,
@@ -110,6 +115,7 @@ impl MatrixArgs {
         MatrixConfig {
             max_properties: self.max_properties,
             max_draft_properties: self.max_draft_properties,
+            skip_property_merge: self.skip_property_merge,
             task_mode: self.task_mode,
             max_subtasks_per_task: self.max_subtasks_per_task.max(1),
             task_checkpoint_step: self.task_checkpoint_step,
@@ -291,6 +297,31 @@ impl MatrixStage {
         if let Some(existing) = self.store.read_optional::<PropertySet>(&path).await? {
             tracing::info!("property set already exists, reusing");
             return Ok(existing);
+        }
+        if self.config.skip_property_merge {
+            let set = PropertySet {
+                scope_snapshot: drafts
+                    .iter()
+                    .map(|d| d.scope_snapshot.trim())
+                    .collect::<Vec<_>>()
+                    .join("\n\n"),
+                properties: drafts
+                    .iter()
+                    .flat_map(|d| d.properties.iter().map(move |p| (d.dimension, p)))
+                    .enumerate()
+                    .map(|(idx, (origin, p))| Property {
+                        id: format!("P{:02}", idx + 1),
+                        origin,
+                        ..p.clone()
+                    })
+                    .collect(),
+            };
+            self.store.write(&path, &set).await?;
+            tracing::info!(
+                "property merge skipped: {} draft properties taken as columns",
+                set.properties.len()
+            );
+            return Ok(set);
         }
         let prompt = self.prompt_context();
         let tool = SubmitPropertiesTool {
